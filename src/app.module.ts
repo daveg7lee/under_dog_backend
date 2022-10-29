@@ -7,6 +7,7 @@ import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
 import { ProjectsModule } from './projects/projects.module';
 import { CategoryModule } from './category/category.module';
+import { UnderdogsModule } from './underdogs/underdogs.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { CategoryModule } from './category/category.module';
     JwtModule.forRoot({ privateKey: process.env.JWT_SECRET_KEY }),
     ProjectsModule,
     CategoryModule,
+    UnderdogsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
