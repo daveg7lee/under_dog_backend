@@ -15,6 +15,7 @@ import { Auth } from 'src/auth/auth.decorator';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { User } from '@prisma/client';
 import { ChargeDto } from './dto/charge.dto';
+import prisma from 'src/prisma';
 
 @Controller('users')
 export class UsersController {
@@ -39,7 +40,13 @@ export class UsersController {
   @Auth(['Any'])
   @Get('me')
   me(@AuthUser() user: User) {
-    return user;
+    return prisma.user.findUnique({
+      where: { id: user.id },
+      include: {
+        underdog: true,
+        invests: { include: { project: { include: { author: true } } } },
+      },
+    });
   }
 
   @Get(':id')

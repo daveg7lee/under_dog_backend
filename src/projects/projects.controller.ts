@@ -31,6 +31,11 @@ export class ProjectsController {
     return this.projectsService.findByCategory(category);
   }
 
+  @Get('/recommended')
+  getRecommended() {
+    return this.projectsService.getRecommended();
+  }
+
   @Auth(['Any'])
   @Get('/underdog/:id')
   findByUnderdog(@Param('id') id: string, @AuthUser() user: User) {
@@ -45,6 +50,11 @@ export class ProjectsController {
     @Body() fundDto: FundDto,
   ) {
     return this.projectsService.fund(+id, user, fundDto);
+  }
+
+  @Get('')
+  findAll() {
+    return this.projectsService.findAll();
   }
 
   @Get(':id')

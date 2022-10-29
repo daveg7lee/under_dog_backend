@@ -9,4 +9,5 @@ export class CreateUserDto {
 
 export class CreateUserOutput extends DefaultOutput {
   user?: User;
+  token?: string;
 }

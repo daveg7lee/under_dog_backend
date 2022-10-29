@@ -11,7 +11,9 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 export class CategoryService {
   async create({ title }: CreateCategoryDto): Promise<CreateCategoryOutput> {
     try {
-      const exists = await prisma.category.findUnique({ where: { title } });
+      const exists = await prisma.category.findUnique({
+        where: { title },
+      });
 
       if (exists) {
         throw new Error('이미 존재하는 카테고리입니다.');
@@ -30,7 +32,9 @@ export class CategoryService {
 
   async findAll(): Promise<CategoriesOutput> {
     try {
-      const categories = await prisma.category.findMany();
+      const categories = await prisma.category.findMany({
+        include: { projects: { include: { author: true } } },
+      });
 
       return {
         success: true,

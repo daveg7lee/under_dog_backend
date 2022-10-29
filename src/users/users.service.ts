@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import prisma from 'src/prisma';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto, CreateUserOutput } from './dto/create-user.dto';
@@ -31,12 +31,21 @@ export class UsersService {
         data: { name, email, password: encryptedPassword },
       });
 
+      const token = this.jwtService.sign(user.id);
+
       return {
         success: true,
         user,
+        token,
       };
     } catch (e) {
-      return { success: false, error: e.message };
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: e.message,
+        },
+        HttpStatus.FORBIDDEN,
+      );
     }
   }
 
@@ -82,7 +91,13 @@ export class UsersService {
         token,
       };
     } catch (e) {
-      return { success: false, error: e.message };
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: e.message,
+        },
+        HttpStatus.FORBIDDEN,
+      );
     }
   }
 

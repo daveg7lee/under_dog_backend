@@ -25,9 +25,9 @@ export class UnderdogsController {
     return this.underdogsService.create(createUnderdogDto, user);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.underdogsService.findOne(+id);
+  @Get(':name')
+  findOne(@Param('name') name: string) {
+    return this.underdogsService.findOne(name);
   }
 
   @Get('search')

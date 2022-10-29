@@ -33,7 +33,7 @@ model User {
 
 model UnderDog {
   id          Int       @id @default(autoincrement())
-  name        String
+  name        String    @unique
   leader      User      @relation(fields: [userId], references: [id])
   userId      Int       @unique
   members     String
@@ -50,9 +50,10 @@ model UnderDog {
 model Inveset {
   id        Int      @id @default(autoincrement())
   investor  User     @relation(fields: [userId], references: [id])
-  project   Project? @relation(fields: [projectId], references: [id])
-  projectId Int?
+  project   Project  @relation(fields: [projectId], references: [id])
+  projectId Int
   userId    Int
+  amount    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -60,7 +61,7 @@ model Inveset {
 model Category {
   id        Int       @id @default(autoincrement())
   title     String    @unique
-  Project   Project[]
+  projects  Project[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
@@ -76,6 +77,7 @@ model Project {
   investors      Inveset[]
   like           User[]
   mediaUrl       String?
+  imageUrl       String?
   category       Category  @relation(fields: [categoryId], references: [id])
   categoryId     Int
   createdAt      DateTime  @default(now())

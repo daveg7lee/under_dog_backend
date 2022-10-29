@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import prisma from 'src/prisma';
 import {
   CreateUnderdogDto,
   CreateUnderdogOutput,
 } from './dto/create-underdog.dto';
+import { UnderdogOutput } from './dto/underdog.dto';
 import { UnderdogsOutput } from './dto/underdogs.dto';
 import { UpdateUnderdogDto } from './dto/update-underdog.dto';
 
@@ -35,10 +36,13 @@ export class UnderdogsService {
         underdog,
       };
     } catch (e) {
-      return {
-        success: false,
-        error: e.message,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: e.message,
+        },
+        HttpStatus.FORBIDDEN,
+      );
     }
   }
 
@@ -57,8 +61,20 @@ export class UnderdogsService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} underdog`;
+  async findOne(name: string): Promise<UnderdogOutput> {
+    try {
+      const underdog = await prisma.underDog.findUnique({ where: { name } });
+
+      return {
+        success: true,
+        underdog,
+      };
+    } catch (e) {
+      return {
+        success: false,
+        error: e.message,
+      };
+    }
   }
 
   update(id: number, updateUnderdogDto: UpdateUnderdogDto) {

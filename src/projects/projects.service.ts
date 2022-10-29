@@ -45,6 +45,24 @@ export class ProjectsService {
     }
   }
 
+  async getRecommended(): Promise<ProjectsOutput> {
+    try {
+      const projects = await prisma.project.findMany({
+        include: { author: true },
+      });
+
+      return {
+        success: true,
+        projects: projects.slice(0, 12),
+      };
+    } catch (e) {
+      return {
+        success: false,
+        error: e.message,
+      };
+    }
+  }
+
   async findByUnderdog(id: number, user: User): Promise<ProjectsOutput> {
     try {
       const underdog = await prisma.underDog.findUnique({
@@ -66,6 +84,24 @@ export class ProjectsService {
       };
     } catch (e) {
       return { success: false, error: e.message };
+    }
+  }
+
+  async findAll(): Promise<ProjectsOutput> {
+    try {
+      const projects = await prisma.project.findMany({
+        include: { author: true },
+      });
+
+      return {
+        success: true,
+        projects,
+      };
+    } catch (e) {
+      return {
+        success: false,
+        error: e.message,
+      };
     }
   }
 
@@ -121,12 +157,20 @@ export class ProjectsService {
 
       await prisma.project.update({
         where: { id },
-        data: { current_amount: project.current_amount + amount },
+        data: { current_amount: +project.current_amount + +amount },
       });
 
       await prisma.user.update({
         where: { id: user.id },
-        data: { points: user.points - amount },
+        data: { points: +user.points - +amount },
+      });
+
+      await prisma.inveset.create({
+        data: {
+          project: { connect: { id: project.id } },
+          investor: { connect: { id: user.id } },
+          amount: +amount,
+        },
       });
 
       return { success: true };
