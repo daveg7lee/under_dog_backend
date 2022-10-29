@@ -14,6 +14,7 @@ import { LoginDto } from './dto/login.dto';
 import { Auth } from 'src/auth/auth.decorator';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { User } from '@prisma/client';
+import { ChargeDto } from './dto/charge.dto';
 
 @Controller('users')
 export class UsersController {
@@ -27,6 +28,12 @@ export class UsersController {
   @Post('login')
   login(@Body() loginDto: LoginDto) {
     return this.usersService.login(loginDto);
+  }
+
+  @Auth(['Any'])
+  @Post('charge')
+  charge(@Body() chargeDto: ChargeDto, @AuthUser() user: User) {
+    return this.usersService.charge(chargeDto, user);
   }
 
   @Auth(['Any'])

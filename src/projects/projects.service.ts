@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import prisma from 'src/prisma';
+import { DefaultOutput } from 'src/shared/shared.dto';
 import {
   CreateProjectDto,
   CreateProjectOutput,
 } from './dto/create-project.dto';
+import { FundDto } from './dto/fund.dto';
+import { ProjectOutput } from './dto/project.dto';
 import { ProjectsOutput } from './dto/projects.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 
@@ -42,6 +45,30 @@ export class ProjectsService {
     }
   }
 
+  async findByUnderdog(id: number, user: User): Promise<ProjectsOutput> {
+    try {
+      const underdog = await prisma.underDog.findUnique({
+        where: { id },
+        include: { leader: true },
+      });
+
+      if (underdog.leader.id !== user.id) {
+        throw new Error('해당 언더독의 대표만 확인할 수 있는 정보입니다.');
+      }
+
+      const projects = await prisma.project.findMany({
+        where: { underDogId: id },
+      });
+
+      return {
+        success: true,
+        projects,
+      };
+    } catch (e) {
+      return { success: false, error: e.message };
+    }
+  }
+
   async findByCategory(categoryTitle: string): Promise<ProjectsOutput> {
     try {
       const category = await prisma.category.findUnique({
@@ -60,6 +87,49 @@ export class ProjectsService {
         success: true,
         projects,
       };
+    } catch (e) {
+      return { success: false, error: e.message };
+    }
+  }
+
+  async search(title: string): Promise<ProjectsOutput> {
+    try {
+      const projects = await prisma.project.findMany({
+        where: { title: { startsWith: title } },
+      });
+
+      return {
+        success: true,
+        projects,
+      };
+    } catch (e) {
+      return { success: false, error: e.message };
+    }
+  }
+
+  async fund(
+    id: number,
+    user: User,
+    { amount }: FundDto,
+  ): Promise<DefaultOutput> {
+    try {
+      if (user.points < amount) {
+        throw new Error('포인트가 부족합니다.');
+      }
+
+      const project = await prisma.project.findUnique({ where: { id } });
+
+      await prisma.project.update({
+        where: { id },
+        data: { current_amount: project.current_amount + amount },
+      });
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { points: user.points - amount },
+      });
+
+      return { success: true };
     } catch (e) {
       return { success: false, error: e.message };
     }

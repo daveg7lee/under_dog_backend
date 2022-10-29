@@ -19,6 +19,7 @@ model User {
   id            Int       @id @default(autoincrement())
   name          String
   email         String    @unique
+  avatarUrl     String
   password      String
   is_verified   Boolean   @default(false)
   points        Int       @default(0)
@@ -32,6 +33,7 @@ model User {
 
 model UnderDog {
   id          Int       @id @default(autoincrement())
+  name        String
   leader      User      @relation(fields: [userId], references: [id])
   userId      Int       @unique
   members     String
@@ -39,6 +41,7 @@ model UnderDog {
   scenario    String
   ability     String
   bio         String
+  avatarUrl   String
   projects    Project[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

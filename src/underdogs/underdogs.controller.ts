@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UnderdogsService } from './underdogs.service';
 import { CreateUnderdogDto } from './dto/create-underdog.dto';
@@ -27,6 +28,11 @@ export class UnderdogsController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.underdogsService.findOne(+id);
+  }
+
+  @Get('search')
+  search(@Query('name') name: string) {
+    return this.underdogsService.search(name);
   }
 
   @Patch(':id')

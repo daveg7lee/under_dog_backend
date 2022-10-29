@@ -6,6 +6,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserProfileOutput } from './dto/user-profile.dto';
 import { LoginDto, LoginOutput } from './dto/login.dto';
 import { JwtService } from 'src/jwt/jwt.service';
+import { ChargeDto, ChargeOutput } from './dto/charge.dto';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -15,6 +17,7 @@ export class UsersService {
     name,
     email,
     password,
+    avatarUrl,
   }: CreateUserDto): Promise<CreateUserOutput> {
     try {
       const exists = await prisma.user.findUnique({ where: { email } });
@@ -26,12 +29,27 @@ export class UsersService {
       const encryptedPassword = await bcrypt.hash(password, 10);
 
       const user = await prisma.user.create({
-        data: { name, email, password: encryptedPassword },
+        data: { name, email, password: encryptedPassword, avatarUrl },
       });
 
       return {
         success: true,
         user,
+      };
+    } catch (e) {
+      return { success: false, error: e.message };
+    }
+  }
+
+  async charge({ amount }: ChargeDto, user: User): Promise<ChargeOutput> {
+    try {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { points: user.points + amount },
+      });
+
+      return {
+        success: true,
       };
     } catch (e) {
       return { success: false, error: e.message };

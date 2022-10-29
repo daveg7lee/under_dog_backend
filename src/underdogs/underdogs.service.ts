@@ -5,6 +5,7 @@ import {
   CreateUnderdogDto,
   CreateUnderdogOutput,
 } from './dto/create-underdog.dto';
+import { UnderdogsOutput } from './dto/underdogs.dto';
 import { UpdateUnderdogDto } from './dto/update-underdog.dto';
 
 @Injectable()
@@ -38,6 +39,21 @@ export class UnderdogsService {
         success: false,
         error: e.message,
       };
+    }
+  }
+
+  async search(name: string): Promise<UnderdogsOutput> {
+    try {
+      const underdogs = await prisma.underDog.findMany({
+        where: { name: { startsWith: name } },
+      });
+
+      return {
+        success: true,
+        underdogs,
+      };
+    } catch (e) {
+      return { success: false, error: e.message };
     }
   }
 
