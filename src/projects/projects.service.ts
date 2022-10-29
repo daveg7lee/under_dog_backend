@@ -184,7 +184,10 @@ export class ProjectsService {
 
   async findOne(id: number): Promise<ProjectOutput> {
     try {
-      const project = await prisma.project.findUnique({ where: { id } });
+      const project = await prisma.project.findUnique({
+        where: { id },
+        include: { author: true, investors: { include: { investor: true } } },
+      });
 
       if (!project) {
         throw new Error('프로젝트를 찾을 수 없습니다.');
