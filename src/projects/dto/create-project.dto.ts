@@ -6,6 +6,9 @@ export class CreateProjectDto {
   readonly detail: string;
   readonly goal_amount: number;
   readonly categoryId: number;
+  readonly ticket_price: number;
+  readonly fundingDueDate: string;
+  readonly fundingReward: string;
 }
 
 export class CreateProjectOutput extends DefaultOutput {

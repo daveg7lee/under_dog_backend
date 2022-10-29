@@ -14,7 +14,15 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 @Injectable()
 export class ProjectsService {
   async create(
-    { title, detail, goal_amount, categoryId }: CreateProjectDto,
+    {
+      title,
+      detail,
+      goal_amount,
+      categoryId,
+      ticket_price,
+      fundingDueDate,
+      fundingReward,
+    }: CreateProjectDto,
     user: User,
   ): Promise<CreateProjectOutput> {
     try {
@@ -30,6 +38,9 @@ export class ProjectsService {
         data: {
           title,
           detail,
+          ticket_price: +ticket_price,
+          fundingDueDate: new Date(fundingDueDate),
+          fundingReward,
           goal_amount: +goal_amount,
           category: { connect: { id: +categoryId } },
           author: { connect: { userId: user.id } },
@@ -52,6 +63,7 @@ export class ProjectsService {
     try {
       const projects = await prisma.project.findMany({
         include: { author: true },
+        orderBy: { createdAt: 'desc' },
       });
 
       return {
@@ -94,6 +106,7 @@ export class ProjectsService {
     try {
       const projects = await prisma.project.findMany({
         include: { author: true },
+        orderBy: { createdAt: 'desc' },
       });
 
       return {
@@ -120,6 +133,7 @@ export class ProjectsService {
 
       const projects = await prisma.project.findMany({
         where: { categoryId: category.id },
+        orderBy: { createdAt: 'desc' },
       });
 
       return {

@@ -76,6 +76,9 @@ model Project {
   current_amount Int       @default(0)
   investors      Inveset[]
   like           User[]
+  ticket_price   Int?
+  fundingDueDate DateTime?
+  fundingReward  String?
   mediaUrl       String?
   imageUrl       String?
   category       Category  @relation(fields: [categoryId], references: [id])
