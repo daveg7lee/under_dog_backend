@@ -63,7 +63,10 @@ export class UnderdogsService {
 
   async findOne(name: string): Promise<UnderdogOutput> {
     try {
-      const underdog = await prisma.underDog.findUnique({ where: { name } });
+      const underdog = await prisma.underDog.findUnique({
+        where: { name },
+        include: { projects: { include: { author: true } } },
+      });
 
       return {
         success: true,

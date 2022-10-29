@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import prisma from 'src/prisma';
 import { DefaultOutput } from 'src/shared/shared.dto';
@@ -30,18 +30,21 @@ export class ProjectsService {
         data: {
           title,
           detail,
-          goal_amount,
-          category: { connect: { id: categoryId } },
+          goal_amount: +goal_amount,
+          category: { connect: { id: +categoryId } },
           author: { connect: { userId: user.id } },
         },
       });
 
       return { success: true, project };
     } catch (e) {
-      return {
-        success: false,
-        error: e.message,
-      };
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: e.message,
+        },
+        HttpStatus.FORBIDDEN,
+      );
     }
   }
 
