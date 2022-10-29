@@ -17,7 +17,6 @@ export class UsersService {
     name,
     email,
     password,
-    avatarUrl,
   }: CreateUserDto): Promise<CreateUserOutput> {
     try {
       const exists = await prisma.user.findUnique({ where: { email } });
@@ -29,7 +28,7 @@ export class UsersService {
       const encryptedPassword = await bcrypt.hash(password, 10);
 
       const user = await prisma.user.create({
-        data: { name, email, password: encryptedPassword, avatarUrl },
+        data: { name, email, password: encryptedPassword },
       });
 
       return {

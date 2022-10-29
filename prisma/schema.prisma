@@ -19,7 +19,7 @@ model User {
   id            Int       @id @default(autoincrement())
   name          String
   email         String    @unique
-  avatarUrl     String
+  avatarUrl     String    @default("https://cdn-icons-png.flaticon.com/512/149/149071.png")
   password      String
   is_verified   Boolean   @default(false)
   points        Int       @default(0)
@@ -41,7 +41,7 @@ model UnderDog {
   scenario    String
   ability     String
   bio         String
-  avatarUrl   String
+  avatarUrl   String    @default("https://cdn-icons-png.flaticon.com/512/149/149071.png")
   projects    Project[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

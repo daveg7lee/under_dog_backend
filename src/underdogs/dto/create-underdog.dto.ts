@@ -3,7 +3,6 @@ import { DefaultOutput } from 'src/shared/shared.dto';
 
 export class CreateUnderdogDto {
   readonly name: string;
-  readonly avatarUrl: string;
   readonly members: string;
   readonly experiences: string;
   readonly scenario: string;
