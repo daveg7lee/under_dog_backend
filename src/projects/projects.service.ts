@@ -167,7 +167,7 @@ export class ProjectsService {
   ): Promise<DefaultOutput> {
     try {
       if (user.points < amount) {
-        throw new Error('포인트가 부족합니다.');
+        throw new Error('돈이 부족합니다.');
       }
 
       const project = await prisma.project.findUnique({ where: { id } });
@@ -192,7 +192,13 @@ export class ProjectsService {
 
       return { success: true };
     } catch (e) {
-      return { success: false, error: e.message };
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: e.message,
+        },
+        HttpStatus.FORBIDDEN,
+      );
     }
   }
 
